@@ -33,10 +33,12 @@
 */
 
 /*
-    Object.fromEntries(Array.from(document.querySelector('.nav__links').children)
-    .flatMap(li => [...li.children])
-    .filter(el => el.matches('.btn--show-modal'))
-    .entries())
+    Object.fromEntries(
+        Array.from(document.querySelector('.nav__links').children)
+        .flatMap(li => [...li.children])
+        .filter(el => el.matches('.btn--show-modal'))
+        .entries()
+    )
 */
 
 /*
@@ -101,7 +103,7 @@ console.log(allButtons);
 console.log(nodeButtons);
 
 console.log(document.getElementsByClassName('btn')); // HTML collection
-// .querySelector() and .querySelector() are more modern ones but getElementsByClassName, getElementsByTagName
+// .querySelector() and .querySelectorAll() are more modern ones but getElementsByClassName, getElementsByTagName
 // also have a place when you need HTML collection which is some situation is useful but most of the time,
 // Jonas prefer to simply keep using .querySelector() and .querySelectorAll();
 
@@ -120,13 +122,13 @@ message.innerHTML =
 
 // we can use the prepend and append methods not only to insert elements but also to move them, and again
 // that is because a DOM element is unique. So it can always only exist at one place at a time.
-//header.prepend(message);
+header.prepend(message);
 //header.append(message);
 // to insert multiple copies of the same element we have to use .cloneNode()
 //header.append(message.cloneNode(true)); // true means is that all the child elements will also be copied
 
 // SIBLINGS
-header.before(message);
+//header.before(message);
 //header.after(message);
 
 // Delete elements
@@ -139,7 +141,7 @@ document
         e.preventDefault();
 
         // Jonas take
-        //message.remove();
+        message.remove();
         //message.parentElement.removeChild(message); // the way of moving up and down in the DOM tree like selecting
         //the parent element is called DOM traversing
 
@@ -153,3 +155,19 @@ document
 
         console.log('deleted');
     });
+
+////////////////////////////////////////////////////
+// Styles, Attributes and Classes
+
+// Styles
+message.style.backgroundColor = '#37383d';
+message.style.width = '120%';
+
+//console.log(message.style.height); // got basically nothing
+//console.log(message.style.backgroundColor); // i'll got inline style because we already specified
+
+console.log(getComputedStyle(message).color);
+console.log(getComputedStyle(message).height);
+
+// error
+message.style.height = `${getComputedStyle(message).height + 40}px`;
