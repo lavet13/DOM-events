@@ -92,7 +92,7 @@ btnScrollTo.addEventListener('click', e => {
 // Event Delegation, Implementing Page Navigation
 
 //////////////////////////////////////////////////
-// Opposite version
+// Opposite version, where we attach on every single link a callback function which is good, but if there is too much buttons, then it will certainly impact the performance
 
 //document.querySelectorAll('.nav__link').forEach(function (el) {
 //el.addEventListener('click', e => {
@@ -149,6 +149,31 @@ document.querySelector('.nav__links').addEventListener('click', e => {
 //we are working with elements that are not yet on the page on runtime, so by the time the page loads, and a great example are buttons that are added dynamically
 //while using the application. So it's not possible to add event handlers on two elements that do not exist, but we will still be able to handle events on elements
 //that don't exist at the beginning by using event delegation one more time
+
+////////////////////////////////////////////////////
+// Building a Tabbed Component
+
+const tabs = document.querySelectorAll('.operations__tab');
+console.log(tabs);
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+
+//const hideAllTabsContent = (tabsContent) => tabsContent
+
+tabsContainer.addEventListener('click', e => {
+    e.preventDefault();
+
+    if (e.target && e.target.matches('.operations__tab')) {
+        switch (e.target.dataset) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+        }
+    }
+});
 
 //////////////////////////////////////////////////////////
 // LECTURES
@@ -482,18 +507,70 @@ document.querySelector('.nav').addEventListener(
 // for the event, as it travels back up and so that happens later and therefore, the NAV is now the first one to show up
 */
 
+/*
 ///////////////////////////////////////////////////
 // DOM Traversing
 // DOM traversing is basically walking through the DOM. Which means that we can select an element based on another element and this is very important because sometimes we need to
 // select elements relative to a certain other element. For example, a direct child or a direct parent element. Or sometimes we don't even know the structure of the DOM at runtime
 // And in all these cases, we need DOM traversing.
 
-const h1 = document.querySelector('h1');
+const h1 = document.querySelector('h1'); // DOM object
 
-// Going downwards: selection child elements
+// querySelector also works for elements, not only for document -_-
+
+////////////////////////////////////////////////////
+// Going downwards: child
 console.log(h1.querySelectorAll('.highlight')); // NodeList
 // as Jonas said, it would go down as deep as necessary into the DOM tree. Also, if there were other highlight elements on the page, they wouldn't get selected
 // because they would not be children of the h1 element
 
+// To get child elements
 console.log(h1.childNodes); // NodeList
 console.log(h1.children); // HTML Collection
+//
+// These names are a little bit confusing, but one more time, that's because of the messy nature of JavaScript with all of these things being implemented at different points in time.
+// And so therefore it was difficult to keep consisting naming conventions.
+console.log(h1.firstChild); // first NODE
+console.log(h1.lastChild); // last NODE
+
+// But anyway, there is better way of receiving first element and last one
+h1.firstElementChild.style.color = 'white'; // first ELEMENT
+h1.lastElementChild.style.color = 'orangered'; // last ELEMENT
+
+//////////////////////////////////////////////////////
+// Going upwards: parents
+console.log(h1.parentNode); // direct node?
+console.log(h1.parentElement); // the one that we are interested in, also it's a direct parent
+
+// Finding closest ancestor Element
+h1.closest('.header').style.background = 'var(--gradient-secondary)';
+
+// if this selector actually matches the element on which we are calling closest, then that's gonna be exactly the element itself
+h1.closest('h1').style.background = 'var(--gradient-primary)';
+
+// so we can think of closest here as basically being the opposite of querySelector. So both receive a query string as an input
+// but querySelector finds children, no matter how deep is the DOM tree, while closest method finds parents, and also no matter how far up in the DOM tree.
+// so very important method here to keep in mind
+
+////////////////////////////////////////////////////
+// Going sideways: siblings
+// for some reason in JavaScript, we can only access direct siblings, basically only the previous and the next one
+console.log(h1.previousElementSibling); // null, since this is a first child of the parent element
+console.log(h1.nextElementSibling); // h4 is returned
+
+// just like before we also have the same methods or actually the same properties for nodes
+console.log(h1.previousSibling); // DOM object
+console.log(h1.nextSibling); // DOM object
+
+// if we really need all the siblings and not just the previous and the next one, then we can use the trick of moving up to the parent element and then read all the children from there.
+console.log(h1.parentElement.children); // HTML collection
+
+// change some style to all siblings, but except the element itself
+[...h1.parentElement.children].forEach(el => {
+    // h1 is our original element itself
+    if (el !== h1) {
+        // comparisons between elements work just fine.
+        el.style.transform = 'scale(0.5)';
+    }
+});
+*/
