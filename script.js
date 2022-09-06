@@ -163,8 +163,6 @@ console.log(tabs);
 const tabsContainer = document.querySelector('.operations__tab-container');
 const tabsContent = document.querySelectorAll('.operations__content');
 
-//const hideAllTabsContent = (tabsContent) => tabsContent
-
 tabsContainer.addEventListener('click', e => {
     e.preventDefault();
 
@@ -220,7 +218,7 @@ tabsContainer.addEventListener('click', e => {
 /**
     document.querySelector('.nav__links').insertAdjacentHTML('afterend', '<h1>Hello</h1>');
     const cloneH1 = document.querySelector('h1').cloneNode(false); // only the node will be cloned. The subtree, including any text that the node contains, is not cloned.
-    const cloneH1 = document.querySelector('h1').cloneNode(true); // including text nodes inside this element
+    const cloneH1 = document.querySelector('h1').cloneNode(true); // the node and it's whole subtree, including text that may be in child Text nodes, is also copied.
  */
 
 /*
@@ -264,6 +262,7 @@ document.getElementById('section--1'); // just an element, so the DOM object
 
 // HTML collection is so-called life collection. And that means that if the DOM changes then this collection
 // is also immediately updated automatically. So our NodeList doesn't have this property
+// document.getElementsByName(); // NodeList
 const allButtons = document.getElementsByTagName('button'); // HTML collection
 const nodeButtons = document.querySelectorAll('button'); // NodeList
 console.log(allButtons);
@@ -276,8 +275,8 @@ console.log(document.getElementsByClassName('btn')); // HTML collection
 
 // Creating and inserting elements
 
-// .insertAdjacentHTML
-// .insertAdjacentElement
+// Element.insertAdjacentHTML
+// Element.insertAdjacentElement
 
 const message = document.createElement('div'); // passing the string of basically the tag name
 // message is not yet in the DOM itself, so it's nowhere to be found on our webpage;
@@ -295,12 +294,13 @@ header.prepend(message);
 //header.append(message.cloneNode(true)); // true means is that all the child elements will also be copied
 
 // SIBLINGS
+// same as for prepend and append methods
 //header.before(message);
 //header.after(message);
 
 // Delete elements
 // so arrow functions doesn't have the "this" keyword and also "arguments" keyword which is the iterable! use function expression instead
-// SOLVE "this" and e.currentTarget are equal, if it had function expression instead of arrow function which isn't point to outer lexical scope, so the parent's function scope
+// SOLVE "this" and e.currentTarget are equal, if it was function expression instead of arrow function which is point to outer lexical scope, so the parent's function scope
 
 document.querySelector('.btn--close-cookie').addEventListener('click', e => {
     e.preventDefault();
@@ -352,7 +352,7 @@ console.log(logo.className); // also empty if it wasn't provided in HTML
 
 logo.alt = 'Beautiful minimalist logo';
 
-// JavaScript doesn't create automatically property that is not a standard, so we would try something like .setAttribute()
+// JavaScript doesn't create automatically property that is not a standard, only the way to specify attribute to the DOM element is to use .setAttribute() method
 console.log(logo.designer); // undefined
 
 // but of course we could still get "designer" attribute
@@ -373,7 +373,8 @@ console.log(link.href); // absolute
 console.log(link.getAttribute('href')); // relative
 
 // Special type of attributes and that's DATA ATTRIBUTES
-console.log(logo.dataset.versionNumber); // DOMStringMap, case sensitive on camelCase
+console.log(logo.dataset.versionNumber); // case sensitive on camelCase
+console.log(logo.dataset); // DOMStringMap
 
 // Classes
 logo.classList.add('c', 'j');
@@ -521,7 +522,8 @@ document.querySelector('.nav').addEventListener(
         //e.target.style.backgroundColor = randomColor();
         console.log('NAV', e.target, e.currentTarget);
     }
-    //,true // by default is false
+    // useCapture 
+    // true // by default is false
 ); // the event handler will no longer listen to bubbling events, instead to capturing events, so the NAV is actually the first appearing, so you see that now the first element through
 // which the event passes, is the navigation, and reason for that is that this element is now actually listening for the event as it travels down from the DOM, while these other ones are listening
 // for the event, as it travels back up and so that happens later and therefore, the NAV is now the first one to show up
@@ -547,7 +549,7 @@ console.log(h1.querySelectorAll('.highlight')); // NodeList
 // To get child elements
 console.log(h1.childNodes); // NodeList
 console.log(h1.children); // HTML Collection
-//
+
 // These names are a little bit confusing, but one more time, that's because of the messy nature of JavaScript with all of these things being implemented at different points in time.
 // And so therefore it was difficult to keep consisting naming conventions.
 console.log(h1.firstChild); // first NODE
@@ -560,7 +562,7 @@ h1.lastElementChild.style.color = 'orangered'; // last ELEMENT
 //////////////////////////////////////////////////////
 // Going upwards: parents
 console.log(h1.parentNode); // direct node?
-console.log(h1.parentElement); // the one that we are interested in, also it's a direct parent
+console.log(h1.parentElement); // the one that we are interested in, also it's a so-called direct parent
 
 // Finding closest ancestor Element
 h1.closest('.header').style.background = 'var(--gradient-secondary)';
