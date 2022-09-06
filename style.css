@@ -276,6 +276,8 @@ h4 {
 
 /* OPERATIONS */
 .operations {
+    display: flex;
+    flex-direction: column;
     max-width: 100rem;
     margin: 12rem auto 0 auto;
 
@@ -319,19 +321,50 @@ h4 {
     transform: translateY(-66%);
 }
 
-.operations__content {
-    display: none;
-
-    /* JUST PRESENTATIONAL */
-    font-size: 1.7rem;
-    padding: 2.5rem 7rem 6.5rem 7rem;
+.operations__content-container {
+    position: relative;
+    flex: 25rem;
+    overflow: hidden;
 }
 
-.operations__content--active {
+.operations__content {
     display: grid;
     grid-template-columns: 7rem 1fr;
     column-gap: 3rem;
     row-gap: 0.5rem;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    visibility: hidden;
+    opacity: 0;
+
+    /* JUST PRESENTATIONAL */
+    font-size: 1.7rem;
+    padding: 2.5rem 7rem 6.5rem 7rem;
+
+    transition: all 0.3s ease-in;
+}
+
+.operations__content--active {
+    visibility: visible;
+    opacity: 1;
+    animation: fromBottom 0.3s ease-in backwards;
+}
+
+@keyframes fromBottom {
+    0% {
+        transform: translateY(200px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(0);
+        opacity: 1;
+    }
 }
 
 .operations__icon {

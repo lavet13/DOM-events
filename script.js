@@ -21,7 +21,7 @@ const closeModal = function (e) {
     e.preventDefault();
     modal.classList.add('hidden');
     overlay.classList.add('hidden');
-    document.body.style.overflow = '';
+    document.body.style.overflow = ''; // as same as just to set it to "auto"
 };
 
 btnsOpenModal.forEach(btn => {
@@ -86,22 +86,25 @@ btnScrollTo.addEventListener('click', e => {
 
     // MODERN WAY of doing scroll animation
     section1.scrollIntoView({ behavior: 'smooth' }); // s1coords is a DOM rect, not an element
+    // if we didn't specify anything in arguments, then default is true which is {block: "start", inline: "nearest"}, false - {block: "end", inline: "nearest"}
 });
 
 //////////////////////////////////////////////////////////
 // Event Delegation, Implementing Page Navigation
 
 //////////////////////////////////////////////////
-// Opposite version, where we attach on every single link a callback function which is good, but if there is too much buttons, then it will certainly impact the performance
+// Opposite version(bad), where we attach on every single link a callback function which is good, but if there is too much buttons, like 10000, then it will certainly impact the performance
 
 //document.querySelectorAll('.nav__link').forEach(function (el) {
 //el.addEventListener('click', e => {
 // e.preventDefault();
-//const id = e.currentTarget.getAttribute('href');
+
+//const id = e.currentTarget.getAttribute('href'); // relative path
 
 //document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
 
-//const section = document.querySelector(e.target.getAttribute('href')); // e.target because it doesn't really matter
+///////////////////////////////////////////////////////////////////
+//const section = document.querySelector(e.target.getAttribute('href')); // e.target or e.currentTarget, it doesn't really matter which one to use
 
 //window.scrollTo({
 //left: section.getBoundingClientRect().left + window.pageXOffset,
@@ -134,8 +137,10 @@ btnScrollTo.addEventListener('click', e => {
 document.querySelector('.nav__links').addEventListener('click', e => {
     e.preventDefault();
 
+    // the "this" keyword here is window object i must say that :D
     // e.target means where the event is originated(возникло)
     if (
+        e.target &&
         e.target.matches('.nav__link') &&
         !e.target.matches('.nav__link--btn')
     ) {
@@ -163,15 +168,30 @@ const tabsContent = document.querySelectorAll('.operations__content');
 tabsContainer.addEventListener('click', e => {
     e.preventDefault();
 
+    const hideAllContent = tabsContent => {
+        tabsContent.forEach(content => {
+            content.classList.remove(`operations__content--active`);
+        });
+    };
+
+    const hideTabsActiveClass = tabs => {
+        tabs.forEach(tab => {
+            tab.classList.remove(`operations__tab--active`);
+        });
+    };
+
     if (e.target && e.target.matches('.operations__tab')) {
-        switch (e.target.dataset) {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-        }
+        hideAllContent(tabsContent);
+        hideTabsActiveClass(tabs);
+
+        // also Array.from works exactly the same as spread operator with brackets notation
+        [...tabsContent]
+            .find(content =>
+                content.matches(`.operations__content--${e.target.dataset.tab}`)
+            )
+            .classList.add('operations__content--active');
+
+        e.target.classList.add('operations__tab--active');
     }
 });
 
@@ -194,7 +214,7 @@ tabsContainer.addEventListener('click', e => {
     .querySelector('.btn--show-modal')
     .closest('ul').children) // we're back to .nav__links essentially, the element
     .map(li => li.children[0])
-    .forEach(el => console.log(el.matches('.btn--show-modal'))) // matches returns true, if the element matches the selectors. Otherwise, false.
+    .forEach(el => console.log(el.matches('.btn--show-modal'))) // true, if the Element matches the selectors. Otherwise, false.
 */
 
 /**
