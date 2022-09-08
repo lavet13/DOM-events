@@ -6,6 +6,10 @@ const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
+const navContainer = document.querySelector('.nav');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
 
 ///////////////////////////////////////
 // Modal window
@@ -158,40 +162,47 @@ document.querySelector('.nav__links').addEventListener('click', e => {
 ////////////////////////////////////////////////////
 // Building a Tabbed Component
 
-const tabs = document.querySelectorAll('.operations__tab');
-console.log(tabs);
-const tabsContainer = document.querySelector('.operations__tab-container');
-const tabsContent = document.querySelectorAll('.operations__content');
-
 tabsContainer.addEventListener('click', e => {
     e.preventDefault();
 
-    const hideAllContent = tabsContent => {
-        tabsContent.forEach(content => {
-            content.classList.remove(`operations__content--active`);
-        });
-    };
+    const clicked = e.target.closest('.operations__tab');
 
-    const hideTabsActiveClass = tabs => {
-        tabs.forEach(tab => {
-            tab.classList.remove(`operations__tab--active`);
-        });
-    };
+    // Guard clause
+    if (!clicked) return;
 
-    if (e.target && e.target.matches('.operations__tab')) {
-        hideAllContent(tabsContent);
-        hideTabsActiveClass(tabs);
+    tabsContent.forEach(content => {
+        content.classList.remove(`operations__content--active`);
+    });
 
-        // also Array.from works exactly the same as spread operator with brackets notation
-        [...tabsContent]
-            .find(content =>
-                content.matches(`.operations__content--${e.target.dataset.tab}`)
-            )
-            .classList.add('operations__content--active');
+    tabs.forEach(tab => {
+        tab.classList.remove(`operations__tab--active`);
+    });
 
-        e.target.classList.add('operations__tab--active');
+    // also Array.from works exactly the same as spread operator with brackets notation
+    //[...tabsContent]
+    //.find(content =>
+    //content.matches(`.operations__content--${e.target.dataset.tab}`)
+    //)
+    //.classList.add('operations__content--active');
+    document
+        .querySelector(`.operations__content--${clicked.dataset.tab}`) // null, if it didn't find anything
+        .classList.add('operations__content--active');
+
+    clicked.classList.add('operations__tab--active');
+});
+
+////////////////////////////////////////////////////
+// Passing Arguments to Event Handlers
+// check the all possible events
+// mouseenter(opposite is mouseleave) doesn't bubble, but here we need the event to actually bubble so that it can even reach the navigation element
+// and so therefore, we use mouseover(opposite is mouseout)
+navContainer.addEventListener('mouseover', e => {
+    // not using closest because there is no child elements that we could accidentally hover or click
+    if (e.target.matches('.nav__link')) {
+        const link = e.target;
     }
 });
+navContainer.addEventListener('mouseout', e => {});
 
 //////////////////////////////////////////////////////////
 // LECTURES
@@ -219,7 +230,7 @@ tabsContainer.addEventListener('click', e => {
     document.querySelector('.nav__links').insertAdjacentHTML('afterend', '<h1>Hello</h1>');
     const cloneH1 = document.querySelector('h1').cloneNode(false); // only the node will be cloned. The subtree, including any text that the node contains, is not cloned.
     const cloneH1 = document.querySelector('h1').cloneNode(true); // the node and it's whole subtree, including text that may be in child Text nodes, is also copied.
- */
+*/
 
 /*
     Array.from(document.querySelector('.nav__links').children)
@@ -476,7 +487,6 @@ h1.addEventListener('mouseenter', () => {
 </html>
 */
 
-/*
 ///////////////////////////////////////////////
 // Event Propagation in Practice
 
@@ -500,7 +510,7 @@ document.querySelector('.nav__link').addEventListener('click', e => {
     // then it will be window object instead;
 
     // Stop propagation
-    //e.stopPropagation(); // therefore these event never reached this document.querySelector('.nav__links'), and also, not document.querySelector('.nav')
+    //e.stopPropagation(); // therefore these event never reached this document.querySelector('.nav__links') which is it's parent, and also, not document.querySelector('.nav')
     // in practice that usually not a good idea to stop propagation
 
     // Event Listener is only listening for events in the bubbling phase, but not in the capturing phase, so that is the default behavior of the addEventListener method
@@ -522,12 +532,11 @@ document.querySelector('.nav').addEventListener(
         //e.target.style.backgroundColor = randomColor();
         console.log('NAV', e.target, e.currentTarget);
     }
-    // useCapture 
+    // useCapture
     // true // by default is false
 ); // the event handler will no longer listen to bubbling events, instead to capturing events, so the NAV is actually the first appearing, so you see that now the first element through
 // which the event passes, is the navigation, and reason for that is that this element is now actually listening for the event as it travels down from the DOM, while these other ones are listening
 // for the event, as it travels back up and so that happens later and therefore, the NAV is now the first one to show up
-*/
 
 /*
 ///////////////////////////////////////////////////

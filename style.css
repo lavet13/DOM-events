@@ -345,12 +345,13 @@ h4 {
     /* JUST PRESENTATIONAL */
     font-size: 1.7rem;
     padding: 2.5rem 7rem 6.5rem 7rem;
+    transition: 0.3s all cubic-bezier(0.15, 1.05, 0.76, 0.99);
 }
 
 .operations__content--active {
     visibility: visible;
     opacity: 1;
-    animation: fromBottom 0.3s cubic-bezier(0.15, 1.05, 0.76, 0.99) backwards;
+    animation: fromBottom 0.5s cubic-bezier(0.15, 1.05, 0.76, 0.99) backwards;
 }
 
 @keyframes fromBottom {
