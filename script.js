@@ -165,6 +165,7 @@ document.querySelector('.nav__links').addEventListener('click', e => {
 tabsContainer.addEventListener('click', e => {
     e.preventDefault();
 
+    console.log(e.target);
     const clicked = e.target.closest('.operations__tab');
 
     // Guard clause
@@ -184,6 +185,7 @@ tabsContainer.addEventListener('click', e => {
     //content.matches(`.operations__content--${e.target.dataset.tab}`)
     //)
     //.classList.add('operations__content--active');
+
     document
         .querySelector(`.operations__content--${clicked.dataset.tab}`) // null, if it didn't find anything
         ?.classList.add('operations__content--active');
@@ -197,38 +199,45 @@ tabsContainer.addEventListener('click', e => {
 // mouseenter(opposite is mouseleave) doesn't bubble, but here we need the event to actually bubble so that it can even reach the navigation element
 // and so therefore, we use mouseover(opposite is mouseout)
 
-// Menu fade animation
-navContainer.addEventListener('mouseover', e => {
-    // not using closest because there is no child elements that we could accidentally hover or click
-
-    if (e.target.matches('.nav__link')) {
+// bind(null(or use some real data, null just an example), data -> if there is more than 2,3 elements we would specify rest pattern in parameters for simplicity) and event still exists (exception)
+// we can bind the "this" keyword by pass in the data(more than 2,3 elements, then set the "this" to the object or array) and specify "e" which stands for the event in the parameters, Jonas prefer this one
+const handleHover = function (opacity) {
+    if (event.target.matches('.nav__link')) {
+        const link = event.target;
         const logo = document.querySelector('.nav__logo');
-        const link = e.target;
         const otherLinks = Array.from(
             document.querySelectorAll('.nav__link')
         ).filter(anchor => anchor !== link);
 
-        logo.style.opacity = 0.5;
-        otherLinks.forEach(other => (other.style.opacity = 0.5));
+        /*
+            if you are using event delegation then you should know 2 ways of handling the specific target:
+            1. when your event originates on the target which didn't have the children, then you would use the e.target
+            2. when your event originates on the target which do have children, for example the event originates on the button that has a span element, then you should use closest method on the e.target to pass in the target's selector
+            if you are not using event delegation:
+            use e.currentTarget or e.target, it doesn't really matter, unless you have children on it's target, then go to step 2
+        */
 
-        //const children = [...navContainer.children].flatMap(el => {
+        // or just e.currentTarget
+        //const children = [...event.target.closest('.nav').children].flatMap(el => {
         //return el.children.length !== 0 ? [...el.children] : el;
         //});
 
         //let [logo, ...links] = children;
-        //links = links.filter(anchor => anchor !== link);
-        //console.log(logo, link, links);
-    }
-});
+        //const otherLinks = links
+        //.flatMap(el => [...el.children])
+        //.filter(anchor => anchor !== link);
 
-navContainer.addEventListener('mouseout', e => {
-    if (e.target.matches('.nav__link')) {
-        const logo = document.querySelector('.nav__logo');
-        const links = Array.from(document.querySelectorAll('.nav__link'));
-        links.forEach(link => (link.style.opacity = 1));
-        logo.style.opacity = 1;
+        logo.style.opacity = opacity;
+        otherLinks.forEach(other => (other.style.opacity = opacity));
     }
-});
+};
+
+// Menu fade animation
+
+// not using closest because there is no child elements that we could accidentally hover or click
+navContainer.addEventListener('mouseover', handleHover.bind(null, 0.5));
+
+navContainer.addEventListener('mouseout', handleHover.bind(null, 1));
 
 //////////////////////////////////////////////////////////
 // LECTURES
@@ -513,6 +522,7 @@ h1.addEventListener('mouseenter', () => {
 </html>
 */
 
+/*
 ///////////////////////////////////////////////
 // Event Propagation in Practice
 
@@ -555,14 +565,17 @@ document.querySelector('.nav').addEventListener(
     'click',
     e => {
         e.currentTarget.style.backgroundColor = randomColor();
+        //e.stopPropagation();
         //e.target.style.backgroundColor = randomColor();
         console.log('NAV', e.target, e.currentTarget);
     }
+    //true
     // useCapture
     // true // by default is false
 ); // the event handler will no longer listen to bubbling events, instead to capturing events, so the NAV is actually the first appearing, so you see that now the first element through
 // which the event passes, is the navigation, and reason for that is that this element is now actually listening for the event as it travels down from the DOM, while these other ones are listening
 // for the event, as it travels back up and so that happens later and therefore, the NAV is now the first one to show up
+*/
 
 /*
 ///////////////////////////////////////////////////
