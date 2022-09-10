@@ -168,7 +168,7 @@ tabsContainer.addEventListener('click', e => {
     const clicked = e.target.closest('.operations__tab');
 
     // Guard clause
-    if (!clicked) return;
+    if (!clicked) return; // if null, then returned
 
     tabsContent.forEach(content => {
         content.classList.remove(`operations__content--active`);
@@ -186,7 +186,7 @@ tabsContainer.addEventListener('click', e => {
     //.classList.add('operations__content--active');
     document
         .querySelector(`.operations__content--${clicked.dataset.tab}`) // null, if it didn't find anything
-        .classList.add('operations__content--active');
+        ?.classList.add('operations__content--active');
 
     clicked.classList.add('operations__tab--active');
 });
@@ -196,13 +196,39 @@ tabsContainer.addEventListener('click', e => {
 // check the all possible events
 // mouseenter(opposite is mouseleave) doesn't bubble, but here we need the event to actually bubble so that it can even reach the navigation element
 // and so therefore, we use mouseover(opposite is mouseout)
+
+// Menu fade animation
 navContainer.addEventListener('mouseover', e => {
     // not using closest because there is no child elements that we could accidentally hover or click
+
     if (e.target.matches('.nav__link')) {
+        const logo = document.querySelector('.nav__logo');
         const link = e.target;
+        const otherLinks = Array.from(
+            document.querySelectorAll('.nav__link')
+        ).filter(anchor => anchor !== link);
+
+        logo.style.opacity = 0.5;
+        otherLinks.forEach(other => (other.style.opacity = 0.5));
+
+        //const children = [...navContainer.children].flatMap(el => {
+        //return el.children.length !== 0 ? [...el.children] : el;
+        //});
+
+        //let [logo, ...links] = children;
+        //links = links.filter(anchor => anchor !== link);
+        //console.log(logo, link, links);
     }
 });
-navContainer.addEventListener('mouseout', e => {});
+
+navContainer.addEventListener('mouseout', e => {
+    if (e.target.matches('.nav__link')) {
+        const logo = document.querySelector('.nav__logo');
+        const links = Array.from(document.querySelectorAll('.nav__link'));
+        links.forEach(link => (link.style.opacity = 1));
+        logo.style.opacity = 1;
+    }
+});
 
 //////////////////////////////////////////////////////////
 // LECTURES
