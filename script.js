@@ -65,7 +65,7 @@ btnScrollTo.addEventListener('click', e => {
     //console.log(e.target.getBoundingClientRect()); // DOMRect, button
 
     // distance between the current position of the viewport and the top of the page
-    console.log(`Current scroll(X/Y)`, window.pageXOffset, window.pageYOffset); // window.pageYOffset is similar to document.documentElement.scrollTop
+    console.log(`Current scroll(X/Y)`, window.pageXOffset, window.pageYOffset); // window.pageYOffset is similar to document.documentElement.scrollTop and also window.scrollY
 
     // it's just dimensions of the viewport that are actually available for the content. And of course that excludes any scroll bars.
     console.log(
@@ -112,7 +112,7 @@ btnScrollTo.addEventListener('click', e => {
 
 //window.scrollTo({
 //left: section.getBoundingClientRect().left + window.pageXOffset,
-//top: section.getBoundingClientRect().top + window.pageYOffset, // or instead of writing window.pageYOffset, we could also write document.documentElement.scrollTop
+//top: section.getBoundingClientRect().top + window.pageYOffset, // or instead of writing window.pageYOffset, we could also write document.documentElement.scrollTop and also window.scrollY
 //behavior: 'smooth',
 //});
 // left === x, top === y
@@ -199,11 +199,13 @@ tabsContainer.addEventListener('click', e => {
 // mouseenter(opposite is mouseleave) doesn't bubble, but here we need the event to actually bubble so that it can even reach the navigation element
 // and so therefore, we use mouseover(opposite is mouseout)
 
-// bind(null(or use some real data, null just an example), data -> if there is more than 2,3 elements we would specify rest pattern in parameters for simplicity) and event still exists (exception)
-// we can bind the "this" keyword by pass in the data(more than 2,3 elements, then set the "this" to the object or array) and specify "e" which stands for the event in the parameters, Jonas prefer this one
-const handleHover = function (opacity) {
-    if (event.target.matches('.nav__link')) {
-        const link = event.target;
+// MENU FADE ANIMATION
+// bind(null(or use some real data), data -> if there is more than 2,3 elements we would specify rest pattern in parameters for simplicity) and event still exists (exception)
+// we can bind the "this" keyword by pass in the data(more than 2,3 elements, then set the "this" to the object or array) and specify "e" which stands for the event in the parameters, Jonas prefer this one and me too :)
+const handleHover = function (e) {
+    // console.log(e.target); // if you are using mouseenter or mouseleave instead of mouseover and mouseout, then you wouldn't get access to the child elements of the DOM element in which the handler is attached to, e.target or e.currentTarget points to the DOM element
+    if (e.target.matches('.nav__link')) {
+        const link = e.target;
         const logo = document.querySelector('.nav__logo');
         const otherLinks = Array.from(
             document.querySelectorAll('.nav__link')
@@ -218,7 +220,7 @@ const handleHover = function (opacity) {
         */
 
         // or just e.currentTarget
-        //const children = [...event.target.closest('.nav').children].flatMap(el => {
+        //const children = [...e.target.closest('.nav').children].flatMap(el => {
         //return el.children.length !== 0 ? [...el.children] : el;
         //});
 
@@ -227,17 +229,49 @@ const handleHover = function (opacity) {
         //.flatMap(el => [...el.children])
         //.filter(anchor => anchor !== link);
 
-        logo.style.opacity = opacity;
-        otherLinks.forEach(other => (other.style.opacity = opacity));
+        logo.style.opacity = this;
+        otherLinks.forEach(other => (other.style.opacity = this));
     }
 };
 
-// Menu fade animation
-
 // not using closest because there is no child elements that we could accidentally hover or click
-navContainer.addEventListener('mouseover', handleHover.bind(null, 0.5));
+navContainer.addEventListener('mouseover', handleHover.bind(0.5));
 
-navContainer.addEventListener('mouseout', handleHover.bind(null, 1));
+navContainer.addEventListener('mouseout', handleHover.bind(1));
+
+//////////////////////////////////////////////////////////
+// Implementing a Sticky Navigation_ The Scroll Event
+// that's work just fine but this is pretty bad for performance, so using the scroll event for performing a certain action at a certain position of the page is really not the way to go, that's because
+// the scroll event here fires all the time, no matter how small the change is here in the scroll
+//window.addEventListener('scroll', () => {
+//if (document.querySelector('#section--1').getBoundingClientRect().y < 0) {
+//navContainer.classList.add('sticky');
+//}
+
+//// window.pageYOffset
+//if (window.scrollY === 0) {
+//navContainer.classList.remove('sticky');
+//}
+//});
+
+//////////////////////////////////////////////////////////
+// A Better Way The Intersection Observer API
+
+// this callback function here will get called each time that the observed element, so our target element, is intersecting the root element at the threshold that we defined
+const obsCallback = function (entries, observer) {
+    // whenever the first section, so our target, is intersecting the viewport at 10%, so the viewport, because that's the root which is "null", and 10% because that's the threshold
+    // then this function here will get called and that's no matter if we are scrolling up or down
+    // entries is an array of the threshold entries
+    entries.forEach(entry => console.log(entry));
+};
+
+const obsOptions = {
+    root: null, // element that the target is intersecting, null is the entire viewport to which our target element will able to intersect with
+    threshold: 0.1, // 10%, the percentage of intersection at which the observer callback will be called
+};
+
+const observer = new IntersectionObserver(obsCallback, obsOptions); // observer -> that's in the arguments of obsCallback
+observer.observe(section1); // target
 
 //////////////////////////////////////////////////////////
 // LECTURES
