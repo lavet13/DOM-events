@@ -10,6 +10,7 @@ const navContainer = document.querySelector('.nav');
 const tabs = document.querySelectorAll('.operations__tab');
 const tabsContainer = document.querySelector('.operations__tab-container');
 const tabsContent = document.querySelectorAll('.operations__content');
+const header = document.querySelector('.header');
 
 ///////////////////////////////////////
 // Modal window
@@ -190,7 +191,7 @@ tabsContainer.addEventListener('click', e => {
         .querySelector(`.operations__content--${clicked.dataset.tab}`) // null, if it didn't find anything
         ?.classList.add('operations__content--active');
 
-    clicked.classList.add('operations__tab--active');
+    clicked?.classList.add('operations__tab--active');
 });
 
 ////////////////////////////////////////////////////
@@ -203,7 +204,7 @@ tabsContainer.addEventListener('click', e => {
 // bind(null(or use some real data), data -> if there is more than 2,3 elements we would specify rest pattern in parameters for simplicity) and event still exists (exception)
 // we can bind the "this" keyword by pass in the data(more than 2,3 elements, then set the "this" to the object or array) and specify "e" which stands for the event in the parameters, Jonas prefer this one and me too :)
 const handleHover = function (e) {
-    // console.log(e.target); // if you are using mouseenter or mouseleave instead of mouseover and mouseout, then you wouldn't get access to the child elements of the DOM element in which the handler is attached to, e.target or e.currentTarget points to the DOM element
+    // console.log(e.target); // if you are using mouseenter or mouseleave instead of mouseover and mouseout, then you wouldn't get access to the child elements of the DOM element that is the handler is attached to, e.target or e.currentTarget points to the DOM element
     if (e.target.matches('.nav__link')) {
         const link = e.target;
         const logo = document.querySelector('.nav__logo');
@@ -258,12 +259,14 @@ navContainer.addEventListener('mouseout', handleHover.bind(1));
 // A Better Way The Intersection Observer API
 // This API allows our code to basically observe(наблюдать) changes to the way that(в том как) a certain target element intersects another element, or the way it intersects the viewport
 
+/*
 // this callback function here will get called each time that the observed element, so our target element, is intersecting the root element at the threshold(порог, предел) that we defined
 const stickyNavCallback = function (entries, observer) {
-    // whenever the first section, so our target, is intersecting the viewport at 10%, so the viewport, because that's the root which is "null", and 10% because that's the threshold
+    // whenever the first section, so our target, is intersecting the viewport at value%, so the viewport, because that's the root which is "null", and value% because that's the threshold
     // then this function here will get called and that's no matter if we are scrolling up or down
     // entries argument is an array of the threshold entries
     // observer -> is the "new IntersectionObserver"
+
     entries.forEach(entry => {
         console.log(entry);
         if (entry.boundingClientRect.y < 0 || entry.isIntersecting) {
@@ -276,22 +279,58 @@ const stickyNavCallback = function (entries, observer) {
 
 const stickyNavOptions = {
     root: null, // root element can be either a specific element in the document which is an ancestor of the element to be observed, or null to use the document's viewport as the container
-    threshold: 0.02, // either a single number or an array of numbers which indicate at what percentage of the target's visibitlity the observer's callback should be executed
+    threshold: 0.02, // 0% here means that basically our callback will trigget each time that the target element moves completely out of the view and also as soon as it enters the view
+    // 1 means that the callback will only be called when 100% of the TARGET is actually visible in the viewport, so in the case of the section1 that would be impossible because the section itself is already
+    // bigger than the viewport
 };
 
 new IntersectionObserver(stickyNavCallback, stickyNavOptions).observe(section1); // section1 is a target;
+*/
 
-//////////////////////////////////////////////
-// Experiments with intersectionObserver
-//new IntersectionObserver(
-//function (entries, observer) {
-//entries.forEach(entry => console.log(entry));
-//},
-//{
-//root: document.querySelector('.operations'),
-//threshold: 0.5,
-//}
-//).observe(tabsContainer);
+const navHeight = navContainer.getBoundingClientRect().height;
+
+const stickyNav = function (entries) {
+    // entries is an regular array
+    const [entry] = entries;
+    console.log(entry);
+
+    if (!entry.isIntersecting) {
+        navContainer.classList.add('sticky');
+    } else {
+        navContainer.classList.remove('sticky');
+    }
+};
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+    root: null,
+    // threshold: 0.95, // the callback will only be called when 95% of the observed target, so our TARGET(header) is actually visible in the viewport
+    // rootMargin: `-${navHeight}px`, // is the box that will be applied outside of our target element, so of our header here. Percentages and rems doesn't work at this property, behaves like a normal margin for the target(header)
+    threshold: 1,
+    rootMargin: `${navHeight}px`,
+});
+
+headerObserver.observe(header);
+
+//////////////////////////////////////////////////////////
+// Revealing Elements on Scroll
+const allSections = document.querySelectorAll('.section');
+
+const revealSection = function (entries, observer) {
+    const [entry] = entries;
+    if (entry.isIntersecting) {
+        entry.target.classList.remove('section--hidden');
+    }
+};
+
+const sectionsObserver = new IntersectionObserver(revealSection, {
+    root: null, // viewport
+    threshold: 0.22,
+});
+
+allSections.forEach(section => {
+    sectionsObserver.observe(section);
+    section.classList.add('section--hidden');
+});
 
 //////////////////////////////////////////////////////////
 // LECTURES
