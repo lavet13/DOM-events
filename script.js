@@ -256,22 +256,42 @@ navContainer.addEventListener('mouseout', handleHover.bind(1));
 
 //////////////////////////////////////////////////////////
 // A Better Way The Intersection Observer API
+// This API allows our code to basically observe(наблюдать) changes to the way that(в том как) a certain target element intersects another element, or the way it intersects the viewport
 
-// this callback function here will get called each time that the observed element, so our target element, is intersecting the root element at the threshold that we defined
-const obsCallback = function (entries, observer) {
+// this callback function here will get called each time that the observed element, so our target element, is intersecting the root element at the threshold(порог, предел) that we defined
+const stickyNavCallback = function (entries, observer) {
     // whenever the first section, so our target, is intersecting the viewport at 10%, so the viewport, because that's the root which is "null", and 10% because that's the threshold
     // then this function here will get called and that's no matter if we are scrolling up or down
-    // entries is an array of the threshold entries
-    entries.forEach(entry => console.log(entry));
+    // entries argument is an array of the threshold entries
+    // observer -> is the "new IntersectionObserver"
+    entries.forEach(entry => {
+        console.log(entry);
+        if (entry.boundingClientRect.y < 0 || entry.isIntersecting) {
+            navContainer.classList.add('sticky');
+        } else {
+            navContainer.classList.remove('sticky');
+        }
+    });
 };
 
-const obsOptions = {
-    root: null, // element that the target is intersecting, null is the entire viewport to which our target element will able to intersect with
-    threshold: 0.1, // 10%, the percentage of intersection at which the observer callback will be called
+const stickyNavOptions = {
+    root: null, // root element can be either a specific element in the document which is an ancestor of the element to be observed, or null to use the document's viewport as the container
+    threshold: 0.02, // either a single number or an array of numbers which indicate at what percentage of the target's visibitlity the observer's callback should be executed
 };
 
-const observer = new IntersectionObserver(obsCallback, obsOptions); // observer -> that's in the arguments of obsCallback
-observer.observe(section1); // target
+new IntersectionObserver(stickyNavCallback, stickyNavOptions).observe(section1); // section1 is a target;
+
+//////////////////////////////////////////////
+// Experiments with intersectionObserver
+//new IntersectionObserver(
+//function (entries, observer) {
+//entries.forEach(entry => console.log(entry));
+//},
+//{
+//root: document.querySelector('.operations'),
+//threshold: 0.5,
+//}
+//).observe(tabsContainer);
 
 //////////////////////////////////////////////////////////
 // LECTURES

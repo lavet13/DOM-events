@@ -313,7 +313,24 @@ h4 {
 .operations__tab-container {
     display: flex;
     justify-content: center;
+    /*animation: UpAndDown 0.5s cubic-bezier(0.15, 1.05, 0.76, 0.99) infinite*/
+    /*backwards;*/
 }
+/*
+@keyframes UpAndDown {
+    0% {
+        transform: translateY(-50px);
+    }
+
+    50% {
+        transform: translateY(50px);
+    }
+
+    100% {
+        transform: translateY(-50px);
+    }
+}
+*/
 
 .operations__tab {
     margin-right: 2.5rem;
