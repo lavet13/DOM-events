@@ -1,5 +1,6 @@
 'use strict';
 
+const logo = document.querySelector('.nav__logo');
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
@@ -11,6 +12,7 @@ const tabs = document.querySelectorAll('.operations__tab');
 const tabsContainer = document.querySelector('.operations__tab-container');
 const tabsContent = document.querySelectorAll('.operations__content');
 const header = document.querySelector('.header');
+const dots = document.querySelector('.dots');
 
 ///////////////////////////////////////
 // Modal window
@@ -48,7 +50,7 @@ document.addEventListener('keydown', function (e) {
 ////////////////////////////////////////////////////////
 // Button scrolling
 btnScrollTo.addEventListener('click', e => {
-    const s1coords = section1.getBoundingClientRect(); // here because it needs to be updated every time we click btn
+    const s1coords = section1.getBoundingClientRect(); // here because it needs to be updated every time we click btn, it didn't preserve otherwise
 
     //window.scrollBy(0, s1coords.y); // from the current position
     //window.scrollTo(0, document.documentElement.scrollTop + s1coords.y); // similar as above, basically property "y" or "top" is always relative to the viewport, but not to the document, so not to the top of the page
@@ -66,7 +68,7 @@ btnScrollTo.addEventListener('click', e => {
     //console.log(e.target.getBoundingClientRect()); // DOMRect, button
 
     // distance between the current position of the viewport and the top of the page
-    console.log(`Current scroll(X/Y)`, window.pageXOffset, window.pageYOffset); // window.pageYOffset is similar to document.documentElement.scrollTop and also window.scrollY
+    console.log(`Current scroll(X/Y)`, window.pageXOffset, window.pageYOffset); // window.pageYOffset is similar to document.documentElement.scrollTop and also to window.scrollY
 
     // it's just dimensions of the viewport that are actually available for the content. And of course that excludes any scroll bars.
     console.log(
@@ -76,11 +78,11 @@ btnScrollTo.addEventListener('click', e => {
     );
 
     // Scrolling without animation
-    //window.scrollTo(
-    //s1coords.left + window.pageXOffset,
-    //s1coords.top + window.pageYOffset
-    //); // top === y, left === x
-    //document.documentElement.scrollTop = window.pageYOffset + s1coords.top; // silly
+    // window.scrollTo(
+    // s1coords.left + window.pageXOffset,
+    // s1coords.top + window.pageYOffset
+    // ); // top === y, left === x
+    // document.documentElement.scrollTop = window.pageYOffset + s1coords.top; // it could be either pageYOffset, scrollTop or scrollY
 
     // Scolling with smooth animation
     //window.scrollTo({
@@ -166,7 +168,7 @@ document.querySelector('.nav__links').addEventListener('click', e => {
 tabsContainer.addEventListener('click', e => {
     e.preventDefault();
 
-    console.log(e.target);
+    //console.log(e.target);
     const clicked = e.target.closest('.operations__tab');
 
     // Guard clause
@@ -215,7 +217,7 @@ const handleHover = function (e) {
         /*
             if you are using event delegation then you should know 2 ways of handling the specific target:
             1. when your event originates on the target which didn't have the children, then you would use the e.target
-            2. when your event originates on the target which do have children, for example the event originates on the button that has a span element, then you should use closest method on the e.target to pass in the target's selector
+            2. when your event originates on the target which do have children, for example the event originates on the button that has a span element, then you should use closest method on the e.target to pass in the button's selector
             if you are not using event delegation:
             use e.currentTarget or e.target, it doesn't really matter, unless you have children on it's target, then go to step 2
         */
@@ -232,6 +234,11 @@ const handleHover = function (e) {
 
         logo.style.opacity = this;
         otherLinks.forEach(other => (other.style.opacity = this));
+    }
+
+    if (e.target.matches('.nav__logo')) {
+        const otherLinks = document.querySelectorAll('.nav__link');
+        otherLinks.forEach(link => (link.style.opacity = this));
     }
 };
 
@@ -260,10 +267,7 @@ navContainer.addEventListener('mouseout', handleHover.bind(1));
 // This API allows our code to basically observe(наблюдать) changes to the way that(в том как) a certain target element intersects another element, or the way it intersects the viewport
 
 /*
-// this callback function here will get called each time that the observed element, so our target element, is intersecting the root element at the threshold(порог, предел) that we defined
 const stickyNavCallback = function (entries, observer) {
-    // whenever the first section, so our target, is intersecting the viewport at value%, so the viewport, because that's the root which is "null", and value% because that's the threshold
-    // then this function here will get called and that's no matter if we are scrolling up or down
     // entries argument is an array of the threshold entries
     // observer -> is the "new IntersectionObserver"
 
@@ -279,7 +283,7 @@ const stickyNavCallback = function (entries, observer) {
 
 const stickyNavOptions = {
     root: null, // root element can be either a specific element in the document which is an ancestor of the element to be observed, or null to use the document's viewport as the container
-    threshold: 0.02, // 0% here means that basically our callback will trigget each time that the target element moves completely out of the view and also as soon as it enters the view
+    threshold: 0.02, // 0% here means that basically our callback will trigger each time that the target element moves completely out of the view and also as soon as it enters the view
     // 1 means that the callback will only be called when 100% of the TARGET is actually visible in the viewport, so in the case of the section1 that would be impossible because the section itself is already
     // bigger than the viewport
 };
@@ -316,20 +320,146 @@ headerObserver.observe(header);
 const allSections = document.querySelectorAll('.section');
 
 const revealSection = function (entries, observer) {
+    // entries argument is an array of the threshold entries
     const [entry] = entries;
-    if (entry.isIntersecting) {
-        entry.target.classList.remove('section--hidden');
-    }
+    console.log(entry);
+
+    // guard clause
+    if (!entry.isIntersecting) return;
+
+    entry.target.classList.remove('section--hidden');
+
+    // small improvement which is to get rid of observe by setting unobserve method
+    observer.unobserve(entry.target);
 };
 
 const sectionsObserver = new IntersectionObserver(revealSection, {
     root: null, // viewport
-    threshold: 0.22,
+    threshold: 0.22, // threshold for the target, i mean definitely i'm not sure how exactly that work, but it's ok for me
 });
 
 allSections.forEach(section => {
     sectionsObserver.observe(section);
     section.classList.add('section--hidden');
+});
+
+// LOGO ANCHOR
+logo.addEventListener('click', e => {
+    //document.body.scrollIntoView({ behavior: 'smooth' });
+
+    //window.scrollBy({
+    //left: document.body.getBoundingClientRect().left,
+    //top: document.body.getBoundingClientRect().top,
+    //behavior: 'smooth',
+    //});
+
+    window.scrollTo({
+        left: window.scrollX + document.body.getBoundingClientRect().left, // window.pageXOffset, document.documentElement.scrollLeft
+        top: window.scrollY + document.body.getBoundingClientRect().top, // window.pageYOffset, document.documentElement.scrollTop
+        behavior: 'smooth',
+    });
+});
+
+//////////////////////////////////////////////////////////
+// Lazy Loading Images
+const imgTargets = document.querySelectorAll('img[data-src]');
+
+const loadImage = function (entries, observer) {
+    const [entry] = entries;
+
+    // entry.target is the element that is currently being intersected
+    if (!entry.isIntersecting) return; // important to specify otherwise first image will appear accidentally
+    entry.target.src = entry.target.dataset.src;
+    entry.target.addEventListener('load', () => {
+        entry.target.classList.remove('lazy-img');
+    });
+
+    observer.unobserve(entry.target); // so we woudn't have to call this function every time the target intersects with our root
+};
+
+const imgObserver = new IntersectionObserver(loadImage, {
+    root: null,
+    threshold: 1,
+    rootMargin: '-80px',
+    //threshold: 0,
+    //rootMargin: '200px',
+});
+
+imgTargets.forEach(img => {
+    imgObserver.observe(img);
+});
+
+//////////////////////////////////////////////////////////
+// Building a Slider Component
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+let currentSlide = 0;
+
+const goToSlide = function (curSlide) {
+    slides.forEach((s, i) => {
+        s.style.transform = `translateX(${100 * (i - curSlide)}%)`;
+    });
+};
+
+const updateDot = function (currentSlide) {
+    Array.from(dots.children).forEach(dot => {
+        dot.classList.remove('dots__dot--active');
+    });
+
+    Array.from(dots.children)
+        .find(dot => +dot.dataset.dot === currentSlide)
+        .classList.add('dots__dot--active');
+};
+
+goToSlide(0);
+
+const switchSlider = function () {
+    if (this) ++currentSlide;
+    else --currentSlide;
+
+    if (currentSlide < 0) currentSlide = slides.length - 1;
+    if (currentSlide >= slides.length) currentSlide = 0;
+
+    updateDot(currentSlide);
+
+    goToSlide(currentSlide);
+};
+
+// Next slide
+btnRight.addEventListener('click', switchSlider.bind(true));
+
+// Prev slide
+btnLeft.addEventListener('click', switchSlider.bind(false));
+
+document.addEventListener('keydown', e => {
+    switch (e.key) {
+        case 'ArrowRight':
+            switchSlider.call(true);
+            break;
+        case 'ArrowLeft':
+            switchSlider.call(false);
+            break;
+    }
+});
+
+slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.classList.add('dots__dot');
+    if (i === 0) dot.classList.add('dots__dot--active');
+    dot.dataset.dot = i;
+    dots.append(dot);
+});
+
+dots.addEventListener('click', e => {
+    e.preventDefault();
+
+    if (e.target.matches('.dots__dot')) {
+        updateDot(+e.target.dataset.dot);
+
+        const curSlide = +e.target.dataset.dot;
+        goToSlide(curSlide);
+    }
 });
 
 //////////////////////////////////////////////////////////
@@ -414,8 +544,8 @@ console.log(document.getElementsByClassName('btn')); // HTML collection
 
 // Creating and inserting elements
 
-// Element.insertAdjacentHTML
-// Element.insertAdjacentElement
+// Element.insertAdjacentHTML(position, text)
+// Element.insertAdjacentElement(position, element)
 
 const message = document.createElement('div'); // passing the string of basically the tag name
 // message is not yet in the DOM itself, so it's nowhere to be found on our webpage;
