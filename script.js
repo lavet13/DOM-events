@@ -298,11 +298,8 @@ const stickyNav = function (entries) {
     const [entry] = entries;
     console.log(entry);
 
-    if (!entry.isIntersecting) {
-        navContainer.classList.add('sticky');
-    } else {
-        navContainer.classList.remove('sticky');
-    }
+    !entry.isIntersecting && navContainer.classList.add('sticky');
+    entry.isIntersecting && navContainer.classList.remove('sticky');
 };
 
 const headerObserver = new IntersectionObserver(stickyNav, {
@@ -335,7 +332,7 @@ const revealSection = function (entries, observer) {
 
 const sectionsObserver = new IntersectionObserver(revealSection, {
     root: null, // viewport
-    threshold: 0.22, // threshold for the target, i mean definitely i'm not sure how exactly that work, but it's ok for me
+    threshold: 0.22,
 });
 
 allSections.forEach(section => {
@@ -399,7 +396,7 @@ const slider = function ({ slides, btnLeft, btnRight, currentSlide }) {
         });
     };
 
-    const updateDot = function (currentSlide) {
+    const updateDots = function (currentSlide) {
         Array.from(dotsContainer.children).forEach(dot => {
             dot.classList.remove('dots__dot--active');
         });
@@ -433,9 +430,9 @@ const slider = function ({ slides, btnLeft, btnRight, currentSlide }) {
         else --currentSlide;
 
         if (currentSlide < 0) currentSlide = slides.length - 1;
-        if (currentSlide >= slides.length) currentSlide = 0;
+        if (currentSlide > slides.length - 1) currentSlide = 0;
 
-        updateDot(currentSlide);
+        updateDots(currentSlide);
     };
 
     const init = function () {
@@ -444,7 +441,7 @@ const slider = function ({ slides, btnLeft, btnRight, currentSlide }) {
                 ? currentSlide
                 : 0;
         createDots();
-        updateDot(currentSlide);
+        updateDots(currentSlide);
     };
     init();
 
@@ -471,7 +468,7 @@ const slider = function ({ slides, btnLeft, btnRight, currentSlide }) {
         if (e.target.matches('.dots__dot')) {
             currentSlide = +e.target.dataset.slide;
 
-            updateDot(currentSlide);
+            updateDots(currentSlide);
         }
     });
 };
@@ -741,6 +738,7 @@ h1.addEventListener('mouseenter', () => {
 // event listener, also for example, to the section element (document.querySelector('section').addEventListener('click', () => {alert('You clicked me')})), then we would get the exact
 // same alert window for the section element as well. So we would have handled the exact same event twice, once at it's target, and once at one of it's parent elements.
 // and this behavior will allow us to implement really powerful patterns, as we will see  throughout the rest of the section. So this really is very, very important to understand.
+
 // Now by default, events can only be handled in the target, and in the bubbling phase. However, we can set up event listeners in a way that they listen to events in the capturing phase instead.
 // Also, actually not all types of events that do have a capturing and bubbling phase, some of them are created right on the target element, and so we can only handle them there.
 // But really, most of the events do capture and bubble, such as I described it here in this lecture, we can also say that events propagate, which is really what capturing and bubbling is.
@@ -773,7 +771,7 @@ h1.addEventListener('mouseenter', () => {
 // rgb(255, 255, 255)
 const randomInt = (min, max) =>
     Math.floor(Math.random() * (max - min + 1) + min); // important (max - min + 1) not (max - min) + 1
-// without + 1 we will get numbers between 0 and not including the value that was specified, within the + 1 we will get numbers between 0 and including the value
+// without + 1 we will get numbers between 0 and not including the value that was specified, within the + 1 we will get numbers between 0 and included value
 
 const randomColor = () =>
     `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`;
@@ -807,12 +805,14 @@ document.querySelector('.nav__links').addEventListener('click', e => {
 
 document.querySelector('.nav').addEventListener(
     'click',
+    
     e => {
         e.currentTarget.style.backgroundColor = randomColor();
         //e.stopPropagation();
         //e.target.style.backgroundColor = randomColor();
         console.log('NAV', e.target, e.currentTarget);
     }
+
     //true
     // useCapture
     // true // by default is false
