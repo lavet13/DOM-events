@@ -480,6 +480,53 @@ slider({
     currentSlide: 0,
 });
 
+/*
+//////////////////////////////////////////////////////////
+// Lifecycle DOM Events
+// fired as soon as the HTML is completely parsed, which means that the HTML has been downloaded and been converted to the DOM tree
+// also, all scripts must be downloaded and executed before DOMContentLoaded event can happen
+// this event does actually not wait for images and other external resources to load, so HTML and JavaScript need to be loaded
+// when we have script tag at the end of the body, then we don't need to listen for the DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', e => {
+    console.log('HTML parsed and DOM tree built!', e);
+});
+
+// there is also the load event and the load event is fired by the window as soon as not only the HTML is parsed, but also all the images and external resources like CSS files are also loaded
+// when complete page has finished loading is when this event gets fired
+window.addEventListener('load', function (e) {
+    console.log('Page fully loaded', e);
+});
+
+// this event here is created immediately before a user is about to leave a page, so basically after clicking this close button in the browser tab, so we can basically
+// use this event to ask users if they are 100% sure that they want to leave the page
+// only time you should prompt the user, if they really want to leave the page is for example, when the user is leaving in the middle of filling out the form,
+// or writing a blog post or something like that
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault(); // requires by other browsers
+
+    console.log(e);
+    e.returnValue = ''; // important
+});
+*/
+
+//////////////////////////////////////////////////////////
+// Efficient Script Loading
+// So one important thing about loading an async script is that the DOMContentLoaded event will not wait for the script to be downloaded and executed, so usually, DOMContentLoaded waits
+// for all scripts to execute, but scripts loaded with async are an exception, so with async, DOMContentLoaded is fired off as soon as HTML finishes parsing, and this might actually happen
+// when a big script takes a long time to load(DOMContentLoaded event appears right after HTML parsing is finished), using defer on the other hand, forces the DOMContentLoaded event
+// to only get fired after the whole script has been downloaded and executed and so this is more traditional way that this event works, another very important aspect is that
+// async scripts are not guaranteed to be executed in the exact order that they are declared in the code, so the script that arrives first gets executed first,
+// on the other hand, by using defer, that is not the case, so using the defer attribute guarantees that the scripts are actually executed in the order that they are declared or written in the code
+// and that is usually what we want to happen, so in conclusion, and also keeping in mind what we learned, using defer in the HTML head is overall the best solution
+// you should use it for your own scripts and for scripts where the order of execution is important
+// for example, if your script relies on some third party library that you need to include, you will include that library before your own script, so that your script can then use the library's code
+// and in this case, you have to use defer and not async, because defer will guarantee the correct order of execution. Now for third party scripts, where the order does not matter, for example
+// an analytics software like Google Analytics, or an ad script, or something like that, then in this case, you should totally use async, so for any code that your own code will not need to interact
+// with, async is just fine, so it's a good use case for this kind of scripts and i'm saying this because, of course, you can use different loading strategies for different scripts in your
+// web application or website, okay, now, what's important to note is that only modern browsers support async and defer and they will basically get ignored in older browsers, so if you need
+// to support all browsers, then you need to put your script tag at the end of the body and not in the head. That's because this is actually not a JavaScript feature, but an HTML5 feature
+// and so you can't really work around this limitation like you can do with modern JavaScript features by transpiling or poly-filling
+
 //////////////////////////////////////////////////////////
 // LECTURES
 //
