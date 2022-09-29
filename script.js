@@ -50,17 +50,17 @@ document.addEventListener('keydown', function (e) {
 ////////////////////////////////////////////////////////
 // Button scrolling
 btnScrollTo.addEventListener('click', e => {
-    const s1coords = section1.getBoundingClientRect(); // here because it needs to be updated every time we click btn, it didn't preserve otherwise
+    const s1coords = section1.getBoundingClientRect(); // here because it needs to be updated every time we click btn, it won't preserve otherwise
 
     //window.scrollBy(0, s1coords.y); // from the current position
     //window.scrollTo(0, document.documentElement.scrollTop + s1coords.y); // similar as above, basically property "y" or "top" is always relative to the viewport, but not to the document, so not to the top of the page
 
-    //console.log(`Current position: ${document.documentElement.scrollTop}`); // distance between the current position of the viewport and the top of the page, also similar to window.pageYOffset
+    //console.log(`Current position: ${document.documentElement.scrollTop}`); // distance between the current position of the viewport and the top of the page, also similar to window.pageYOffset, window.scrollY
     //console.log(`Section coords: ${s1coords.y}`);
     //console.log((document.documentElement.scrollTop += s1coords.y));
 
     //console.log(
-    //`Half of the viewport: ${document.documentElement.clientHeight / 2}`
+    //`Half of the viewport height: ${document.documentElement.clientHeight / 2}`
     //);
 
     console.log(s1coords); // DOMRect, it doesn't behave like a life collection
@@ -193,7 +193,7 @@ tabsContainer.addEventListener('click', e => {
         .querySelector(`.operations__content--${clicked.dataset.tab}`) // null, if it didn't find anything
         ?.classList.add('operations__content--active');
 
-    clicked?.classList.add('operations__tab--active');
+    clicked.classList.add('operations__tab--active');
 });
 
 ////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ tabsContainer.addEventListener('click', e => {
 // and so therefore, we use mouseover(opposite is mouseout)
 
 // MENU FADE ANIMATION
-// bind(null(or use some real data), data -> if there is more than 2,3 elements we would specify rest pattern in parameters for simplicity) and event still exists (exception)
+// bind(null(or use some real data), data -> if there is more than 2,3 elements we would specify rest pattern in parameters for simplicity) and "event" still exists (exception)
 // we can bind the "this" keyword by pass in the data(more than 2,3 elements, then set the "this" to the object or array) and specify "e" which stands for the event in the parameters, Jonas prefer this one and me too :)
 const handleHover = function (e) {
     // console.log(e.target); // if you are using mouseenter or mouseleave instead of mouseover and mouseout, then you wouldn't get access to the child elements of the DOM element that is the handler is attached to, e.target or e.currentTarget points to the DOM element
@@ -729,7 +729,7 @@ const h1 = document.querySelector('h1');
 
 const alertH1 = function (e) {
     alert('addEventListener: Great! You are reading the heading :D');
-    // of course we could do the same with the "this" keyword but in case we would use arrow function then we get window object
+    // of course we could do the same with the "this" keyword but in case we had to use arrow function then we got window object
     e.currentTarget.removeEventListener('mouseenter', alertH1);
     console.log(e.currentTarget);
     //h1.removeEventListener('mouseenter', alertH1);
@@ -784,7 +784,7 @@ h1.addEventListener('mouseenter', () => {
 // So again, as the event bubbles through a parent element, it's as if the event had happened right in that very element. What this means is that if we attach the same
 // event listener, also for example, to the section element (document.querySelector('section').addEventListener('click', () => {alert('You clicked me')})), then we would get the exact
 // same alert window for the section element as well. So we would have handled the exact same event twice, once at it's target, and once at one of it's parent elements.
-// and this behavior will allow us to implement really powerful patterns, as we will see  throughout the rest of the section. So this really is very, very important to understand.
+// and this behavior will allow us to implement really powerful patterns, as we will see throughout the rest of the section. So this really is very, very important to understand.
 
 // Now by default, events can only be handled in the target, and in the bubbling phase. However, we can set up event listeners in a way that they listen to events in the capturing phase instead.
 // Also, actually not all types of events that do have a capturing and bubbling phase, some of them are created right on the target element, and so we can only handle them there.
@@ -835,13 +835,13 @@ document.querySelector('.nav__link').addEventListener('click', e => {
     // then it will be window object instead;
 
     // Stop propagation
-    //e.stopPropagation(); // therefore these event never reached this document.querySelector('.nav__links') which is it's parent, and also, not document.querySelector('.nav')
+    //e.stopPropagation(); // therefore this event will never reach this document.querySelector('.nav__links') which is it's parent, and also, not document.querySelector('.nav')
     // in practice that usually not a good idea to stop propagation
 
     // Event Listener is only listening for events in the bubbling phase, but not in the capturing phase, so that is the default behavior of the addEventListener method
     // and the reason for that is that the capturing phase is usually irrelevant for us. It's just not that useful. Now, on the other hand, the bubbling phase can be very
     // useful for something called EVENT DELEGATION. However if we really do want to catch events during the capturing phase, we can define a third parameter in the addEventListener function.
-    // For example, we can set the third parameter to true or false
+    // For example, we can set the third parameter to true
 });
 
 document.querySelector('.nav__links').addEventListener('click', e => {
