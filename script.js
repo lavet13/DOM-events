@@ -289,6 +289,7 @@ const stickyNavOptions = {
 };
 
 new IntersectionObserver(stickyNavCallback, stickyNavOptions).observe(section1); // section1 is a target;
+
 */
 
 const navHeight = navContainer.getBoundingClientRect().height;
