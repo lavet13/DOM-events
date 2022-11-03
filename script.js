@@ -82,7 +82,7 @@ btnScrollTo.addEventListener('click', e => {
     // s1coords.left + window.pageXOffset,
     // s1coords.top + window.pageYOffset
     // ); // top === y, left === x
-    // document.documentElement.scrollTop = window.pageYOffset + s1coords.top; // it could be either pageYOffset, scrollTop or scrollY
+    // document.documentElement.scrollTop = window.pageYOffset + s1coords.top; // it could be either window.pageYOffset, document.documentElement.scrollTop or window.scrollY
 
     // Scolling with smooth animation
     //window.scrollTo({
@@ -198,7 +198,7 @@ tabsContainer.addEventListener('click', e => {
 
 ////////////////////////////////////////////////////
 // Passing Arguments to Event Handlers
-// check the all possible events
+
 // mouseenter(opposite is mouseleave) doesn't bubble, but here we need the event to actually bubble so that it can even reach the navigation element
 // and so therefore, we use mouseover(opposite is mouseout)
 
@@ -206,7 +206,7 @@ tabsContainer.addEventListener('click', e => {
 // bind(null(or use some real data), data -> if there is more than 2,3 elements we would specify rest pattern in parameters for simplicity) and "event" still exists (exception)
 // we can bind the "this" keyword by pass in the data(more than 2,3 elements, then set the "this" to the object or array) and specify "e" which stands for the event in the parameters, Jonas prefer this one and me too :)
 const handleHover = function (e) {
-    // console.log(e.target); // if you are using mouseenter or mouseleave instead of mouseover and mouseout, then you wouldn't get access to the child elements of the DOM element that is the handler is attached to, e.target or e.currentTarget points to the DOM element
+    //console.log(e.target); // if you are using mouseenter or mouseleave instead of mouseover and mouseout, then you wouldn't get access to the child elements of the DOM element that is the handler is attached to, e.target or e.currentTarget points to the DOM element
     if (e.target.matches('.nav__link')) {
         const link = e.target;
         const logo = document.querySelector('.nav__logo');
@@ -252,7 +252,7 @@ navContainer.addEventListener('mouseout', handleHover.bind(1));
 // that's work just fine but this is pretty bad for performance, so using the scroll event for performing a certain action at a certain position of the page is really not the way to go, that's because
 // the scroll event here fires all the time, no matter how small the change is here in the scroll
 //window.addEventListener('scroll', () => {
-//if (document.querySelector('#section--1').getBoundingClientRect().y < 0) {
+//if (section1.getBoundingClientRect().y < header.getBoundingClientRect().height) {
 //navContainer.classList.add('sticky');
 //}
 
@@ -289,7 +289,6 @@ const stickyNavOptions = {
 };
 
 new IntersectionObserver(stickyNavCallback, stickyNavOptions).observe(section1); // section1 is a target;
-
 */
 
 const navHeight = navContainer.getBoundingClientRect().height;
@@ -307,6 +306,7 @@ const headerObserver = new IntersectionObserver(stickyNav, {
     root: null,
     // threshold: 0.95, // the callback will only be called when 95% of the observed target, so our TARGET(header) is actually visible in the viewport
     // rootMargin: `-${navHeight}px`, // is the box that will be applied outside of our target element, so of our header here. Percentages and rems doesn't work at this property, behaves like a normal margin for the target(header)
+
     threshold: 1,
     rootMargin: `${navHeight}px`,
 });
@@ -502,6 +502,7 @@ window.addEventListener('load', function (e) {
 // use this event to ask users if they are 100% sure that they want to leave the page
 // only time you should prompt the user, if they really want to leave the page is for example, when the user is leaving in the middle of filling out the form,
 // or writing a blog post or something like that
+
 window.addEventListener('beforeunload', function (e) {
     e.preventDefault(); // requires by other browsers
 
@@ -861,9 +862,8 @@ document.querySelector('.nav').addEventListener(
         console.log('NAV', e.target, e.currentTarget);
     }
 
-    //true
+    //true // by default is false
     // useCapture
-    // true // by default is false
 ); // the event handler will no longer listen to bubbling events, instead to capturing events, so the NAV is actually the first appearing, so you see that now the first element through
 // which the event passes, is the navigation, and reason for that is that this element is now actually listening for the event as it travels down from the DOM, while these other ones are listening
 // for the event, as it travels back up and so that happens later and therefore, the NAV is now the first one to show up
