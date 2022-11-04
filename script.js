@@ -736,6 +736,7 @@ const alertH1 = function (e) {
     console.log(e.currentTarget);
     //h1.removeEventListener('mouseenter', alertH1);
 };
+
 // there are three ways why addEventListener is better
 // first one is that is allows us to add multiple event listeners to the same event(click, mouseenter), on the other hand on-event property that has function value and after adding a new one then the first function will gonna be overrided
 // second one is even more important that we can remove event handler in case we don't need it anymore
@@ -861,7 +862,7 @@ document.querySelector('.nav').addEventListener(
         //e.target.style.backgroundColor = randomColor();
         console.log('NAV', e.target, e.currentTarget);
     }
-
+    //,
     //true // by default is false
     // useCapture
 ); // the event handler will no longer listen to bubbling events, instead to capturing events, so the NAV is actually the first appearing, so you see that now the first element through
@@ -935,4 +936,5 @@ console.log(h1.parentElement.children); // HTML collection
         el.style.transform = 'scale(0.5)';
     }
 });
+
 */
