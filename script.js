@@ -444,6 +444,7 @@ const slider = function ({ slides, btnLeft, btnRight, currentSlide }) {
         createDots();
         updateDots(currentSlide);
     };
+
     init();
 
     // Next slide
@@ -624,8 +625,8 @@ message.innerHTML =
 
 // we can use the prepend and append methods not only to insert elements but also to move them, and again
 // that is because a DOM element is unique. So it can always only exist at one place at a time.
-header.prepend(message);
-//header.append(message);
+header.prepend(message); // insert element at the beginning
+//header.append(message); // insert element at the end
 // to insert multiple copies of the same element we have to use .cloneNode()
 //header.append(message.cloneNode(true)); // true means is that all the child elements will also be copied
 
